@@ -1,0 +1,18 @@
+#!/usr/bin/env node
+var app = require('../lib/server');
+
+
+var bot = app.bot;
+// bot.login()
+
+bot.login().then(() => {
+  app.server.listen(3000);
+  console.log('server listening');
+}).catch(err=>{
+  console.error(err);
+  console.error('failed to login. exiting');
+});
+
+process.on('beforeExit', function(){
+  bot.logoutAll();
+});
