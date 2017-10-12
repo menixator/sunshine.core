@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>lastdataexact.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="formatter.html">
+                  formatter.js
+                </a>
+              
+                
+                <a class="source" href="normalize.html">
+                  normalize.js
+                </a>
+              
+                
+                <a class="source" href="alldata.html">
+                  alldata.js
+                </a>
+              
+                
+                <a class="source" href="authentication.html">
+                  authentication.js
+                </a>
+              
+                
+                <a class="source" href="base.html">
+                  base.js
+                </a>
+              
+                
+                <a class="source" href="data.html">
+                  data.js
+                </a>
+              
+                
+                <a class="source" href="dayoverview.html">
+                  dayoverview.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
+                <a class="source" href="lastdataexact.html">
+                  lastdataexact.js
+                </a>
+              
+                
+                <a class="source" href="logout.html">
+                  logout.js
+                </a>
+              
+                
+                <a class="source" href="monthoverview.html">
+                  monthoverview.js
+                </a>
+              
+                
+                <a class="source" href="plantlist.html">
+                  plantlist.js
+                </a>
+              
+                
+                <a class="source" href="plantprofile.html">
+                  plantprofile.js
+                </a>
+              
+                
+                <a class="source" href="plantrequest.html">
+                  plantrequest.js
+                </a>
+              
+                
+                <a class="source" href="yearoverview.html">
+                  yearoverview.js
+                </a>
+              
+                
+                <a class="source" href="alldata.html">
+                  alldata.js
+                </a>
+              
+                
+                <a class="source" href="authentication.html">
+                  authentication.js
+                </a>
+              
+                
+                <a class="source" href="base.html">
+                  base.js
+                </a>
+              
+                
+                <a class="source" href="data.html">
+                  data.js
+                </a>
+              
+                
+                <a class="source" href="dayoverview.html">
+                  dayoverview.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
+                <a class="source" href="lastdataexact.html">
+                  lastdataexact.js
+                </a>
+              
+                
+                <a class="source" href="monthoverview.html">
+                  monthoverview.js
+                </a>
+              
+                
+                <a class="source" href="overview.html">
+                  overview.js
+                </a>
+              
+                
+                <a class="source" href="plantlist.html">
+                  plantlist.js
+                </a>
+              
+                
+                <a class="source" href="plantprofile.html">
+                  plantprofile.js
+                </a>
+              
+                
+                <a class="source" href="yearoverview.html">
+                  yearoverview.js
+                </a>
+              
+                
+                <a class="source" href="server.html">
+                  server.js
+                </a>
+              
+                
+                <a class="source" href="sunshine.html">
+                  sunshine.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>lastdataexact.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> Data = <span class="hljs-built_in">require</span>(<span class="hljs-string">"./data"</span>);
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">LastDataExact</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Data</span> </span>{
+  toJSON() {
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-attr">name</span>: <span class="hljs-keyword">this</span>.name,
+      <span class="hljs-attr">metaName</span>: <span class="hljs-keyword">this</span>.metaName,
+      <span class="hljs-attr">unit</span>: <span class="hljs-keyword">this</span>.unit,
+      <span class="hljs-attr">day</span>: <span class="hljs-keyword">this</span>.day,
+      <span class="hljs-attr">hour</span>: <span class="hljs-keyword">this</span>.hour
+    };
+  }
+
+  parse() {
+    <span class="hljs-keyword">let</span> chan = <span class="hljs-keyword">this</span>.findOne(<span class="hljs-string">"Energy/channel"</span>, <span class="hljs-keyword">this</span>.contextNode);
+    <span class="hljs-keyword">let</span> attrs = <span class="hljs-keyword">this</span>.attr([<span class="hljs-string">"name"</span>, <span class="hljs-string">"meta-name"</span>, <span class="hljs-string">"unit"</span>], chan);
+
+    <span class="hljs-keyword">this</span>.name = attrs.name;
+    <span class="hljs-keyword">this</span>.metaName = attrs[<span class="hljs-string">"meta-name"</span>];
+    <span class="hljs-keyword">this</span>.unit = attrs.unit;
+
+    <span class="hljs-keyword">let</span> day = <span class="hljs-keyword">this</span>.attr([<span class="hljs-string">"timestamp"</span>, <span class="hljs-string">"absolute"</span>, <span class="hljs-string">"difference"</span>], <span class="hljs-string">"day"</span>, chan);
+    <span class="hljs-keyword">let</span> hour = <span class="hljs-keyword">this</span>.attr([<span class="hljs-string">"timestamp"</span>, <span class="hljs-string">"absolute"</span>, <span class="hljs-string">"difference"</span>], <span class="hljs-string">"hour"</span>, chan);
+
+    <span class="hljs-keyword">this</span>.day = {
+      <span class="hljs-attr">timestamp</span>: day.timestamp,
+      <span class="hljs-attr">absolute</span>: <span class="hljs-keyword">this</span>.parseFloat(day.absolute),
+      <span class="hljs-attr">difference</span>: <span class="hljs-keyword">this</span>.parseFloat(day.difference)
+    };
+
+    <span class="hljs-keyword">this</span>.hour = {
+      <span class="hljs-attr">timestamp</span>: hour.timestamp,
+      <span class="hljs-attr">absolute</span>: <span class="hljs-keyword">this</span>.parseFloat(hour.absolute),
+      <span class="hljs-attr">difference</span>: <span class="hljs-keyword">this</span>.parseFloat(hour.difference)
+    };
+  }
+}
+
+<span class="hljs-built_in">module</span>.exports = LastDataExact;</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

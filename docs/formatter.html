@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>formatter.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="formatter.html">
+                  formatter.js
+                </a>
+              
+                
+                <a class="source" href="normalize.html">
+                  normalize.js
+                </a>
+              
+                
+                <a class="source" href="alldata.html">
+                  alldata.js
+                </a>
+              
+                
+                <a class="source" href="authentication.html">
+                  authentication.js
+                </a>
+              
+                
+                <a class="source" href="base.html">
+                  base.js
+                </a>
+              
+                
+                <a class="source" href="data.html">
+                  data.js
+                </a>
+              
+                
+                <a class="source" href="dayoverview.html">
+                  dayoverview.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
+                <a class="source" href="lastdataexact.html">
+                  lastdataexact.js
+                </a>
+              
+                
+                <a class="source" href="logout.html">
+                  logout.js
+                </a>
+              
+                
+                <a class="source" href="monthoverview.html">
+                  monthoverview.js
+                </a>
+              
+                
+                <a class="source" href="plantlist.html">
+                  plantlist.js
+                </a>
+              
+                
+                <a class="source" href="plantprofile.html">
+                  plantprofile.js
+                </a>
+              
+                
+                <a class="source" href="plantrequest.html">
+                  plantrequest.js
+                </a>
+              
+                
+                <a class="source" href="yearoverview.html">
+                  yearoverview.js
+                </a>
+              
+                
+                <a class="source" href="alldata.html">
+                  alldata.js
+                </a>
+              
+                
+                <a class="source" href="authentication.html">
+                  authentication.js
+                </a>
+              
+                
+                <a class="source" href="base.html">
+                  base.js
+                </a>
+              
+                
+                <a class="source" href="data.html">
+                  data.js
+                </a>
+              
+                
+                <a class="source" href="dayoverview.html">
+                  dayoverview.js
+                </a>
+              
+                
+                <a class="source" href="index.html">
+                  index.js
+                </a>
+              
+                
+                <a class="source" href="lastdataexact.html">
+                  lastdataexact.js
+                </a>
+              
+                
+                <a class="source" href="monthoverview.html">
+                  monthoverview.js
+                </a>
+              
+                
+                <a class="source" href="overview.html">
+                  overview.js
+                </a>
+              
+                
+                <a class="source" href="plantlist.html">
+                  plantlist.js
+                </a>
+              
+                
+                <a class="source" href="plantprofile.html">
+                  plantprofile.js
+                </a>
+              
+                
+                <a class="source" href="yearoverview.html">
+                  yearoverview.js
+                </a>
+              
+                
+                <a class="source" href="server.html">
+                  server.js
+                </a>
+              
+                
+                <a class="source" href="sunshine.html">
+                  sunshine.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>formatter.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> chalk = <span class="hljs-built_in">require</span>(<span class="hljs-string">"chalk"</span>);
+<span class="hljs-keyword">const</span> debug = <span class="hljs-built_in">require</span>(<span class="hljs-string">"debug"</span>);
+<span class="hljs-keyword">const</span> LOGGERS = <span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>();
+
+<span class="hljs-keyword">let</span> getLogger = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">nsp</span>) </span>{
+  <span class="hljs-keyword">if</span> (!LOGGERS.has(nsp)) {
+    LOGGERS.set(nsp, debug(nsp));
+  }
+  <span class="hljs-keyword">return</span> LOGGERS.get(nsp);
+};
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">namespace</span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">strings, ...args</span>) </span>{
+    <span class="hljs-keyword">let</span> formattedArgs = args.map(<span class="hljs-function"><span class="hljs-params">arg</span> =&gt;</span> {
+      <span class="hljs-keyword">let</span> type = <span class="hljs-built_in">Object</span>.prototype.toString
+        .call(arg)
+        .slice(<span class="hljs-string">"[object "</span>.length, <span class="hljs-number">-1</span>);
+      <span class="hljs-keyword">switch</span> (type) {
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"String"</span>:
+          <span class="hljs-keyword">if</span> (arg === <span class="hljs-string">'@@'</span>) <span class="hljs-keyword">return</span> <span class="hljs-string">''</span>;
+          <span class="hljs-keyword">return</span> <span class="hljs-string">`'<span class="hljs-subst">${chalk.green(arg)}</span>'`</span>;
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"Null"</span>:
+          <span class="hljs-keyword">return</span> chalk.magenta(arg);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"Number"</span>:
+          <span class="hljs-keyword">return</span> chalk.blue(arg);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"Undefined"</span>:
+          <span class="hljs-keyword">return</span> chalk.yellow(arg);
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"Object"</span>:
+          <span class="hljs-keyword">return</span> chalk.cyan(<span class="hljs-built_in">Object</span>.keys(arg).reduce(<span class="hljs-function">(<span class="hljs-params">str, key</span>)=&gt;</span> <span class="hljs-string">`<span class="hljs-subst">${str}</span> <span class="hljs-subst">${key}</span>=<span class="hljs-subst">${arg[key]}</span>`</span>, <span class="hljs-string">''</span>));
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"Error"</span>:
+          <span class="hljs-keyword">return</span> chalk.red(
+            <span class="hljs-string">`&lt;<span class="hljs-subst">${arg.constructor.name || <span class="hljs-string">"Error"</span>}</span><span class="hljs-subst">${arg.code || <span class="hljs-string">''</span>}</span>: <span class="hljs-subst">${arg.message}</span>&gt;`</span>
+          );
+        <span class="hljs-keyword">case</span> <span class="hljs-string">"Default"</span>:
+          <span class="hljs-keyword">return</span> arg;
+      }
+    });
+
+    <span class="hljs-keyword">let</span> unMuxedStrings = strings.slice(<span class="hljs-number">0</span>);
+    <span class="hljs-keyword">let</span> unMuxedArgs = formattedArgs.slice(<span class="hljs-number">0</span>);
+    <span class="hljs-keyword">let</span> mux = [];
+
+    <span class="hljs-keyword">while</span> (unMuxedStrings.length + unMuxedArgs.length &gt; <span class="hljs-number">0</span>) {
+      <span class="hljs-keyword">if</span> (unMuxedStrings.length) mux.push(unMuxedStrings.shift());
+      <span class="hljs-keyword">if</span> (unMuxedArgs.length) mux.push(unMuxedArgs.shift());
+    }
+
+    <span class="hljs-keyword">return</span> getLogger(namespace)(mux.join(<span class="hljs-string">""</span>));
+  };
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
