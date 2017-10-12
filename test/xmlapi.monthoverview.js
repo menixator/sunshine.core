@@ -11,7 +11,9 @@ bot
   .then(async () => {
     console.log("logged in!");
     let plants = await bot.getPlants();
-    let plant = await bot.monthOverview(plants.list[0].oid);
+    let monthOverview = await bot.monthOverview(plants.list[0].oid);
+
+    console.log(monthOverview.toJSON())
 
     return bot.logout();
   })

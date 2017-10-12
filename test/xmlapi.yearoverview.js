@@ -11,7 +11,8 @@ bot
   .login()
   .then(async () => {
     let plants = await bot.getPlants();
-    let plant = await bot.yearOverview(plants.list[0].oid);
+    let yearOverview = await bot.yearOverview(plants.list[0].oid);
+    console.log(yearOverview)
     return bot.logout();
   })
   .catch(err => {
