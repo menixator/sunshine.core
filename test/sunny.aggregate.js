@@ -10,7 +10,7 @@ bot
   .login()
   .then(async () => {
     let powerReading = await bot.aggregate();
-    console.log(powerReading)
+    console.log(JSON.stringify(powerReading, null, 2))
     return bot.logout();
   })
   .catch(err => {
