@@ -1,8 +1,9 @@
 const Sunshine = require("../lib/sunshine");
+const config = require('../lib/config').fromEnv();
 
 let bot = new Sunshine({
-  username: "ahmed.miljau@gmail.com",
-  password: "cipeqeza"
+  username: config.get('username'),
+  password: config.get('password')
 });
 
 bot
