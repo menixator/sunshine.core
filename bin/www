@@ -1,18 +1,21 @@
-#!/usr/bin/env node
+let config = require('../lib/config');
+let formatter = require('../lib/formatter');
 var app = require('../lib/server');
+
+let log = formatter('sunny:www');
+
+config.fromEnv();
 
 
 var bot = app.bot;
-// bot.login()
 
 bot.login().then(() => {
-  app.server.listen(3000);
-  console.log('server listening');
+  log`logged in`;
+  app.server.listen(config.get('port'), config.get('host'), function(err){
+    if (err){
+      return log`couldn\'t start server due to err: ${err}`
+    }
+  });
 }).catch(err=>{
-  console.error(err);
-  console.error('failed to login. exiting');
-});
-
-process.on('beforeExit', function(){
-  bot.logoutAll();
+  log`an error occured: ${err}`
 });
