@@ -1,21 +1,27 @@
-let config = require('../lib/config');
-let formatter = require('../lib/formatter');
-var app = require('../lib/server');
+let config = require("../lib/config");
+let formatter = require("../lib/formatter");
+var app = require("../lib/server");
 
-let log = formatter('sunny:www');
+let log = formatter("sunny:www");
 
 config.fromEnv();
 
-
 var bot = app.bot;
 
-bot.login().then(() => {
-  log`logged in`;
-  app.server.listen(config.get('port'), config.get('host'), function(err){
-    if (err){
-      return log`couldn\'t start server due to err: ${err}`
-    }
+bot
+  .login()
+  .then(() => {
+    log`logged in`;
+    let port = config.get("port");
+
+    let host = config.get("host");
+    app.server.listen(port, host, function(err) {
+      if (err) {
+        return log`couldn\'t start server due to err: ${err}`;
+      }
+      log`server listening at: http://${host}:${port}`;
+    });
+  })
+  .catch(err => {
+    log`an error occured: ${err}`;
   });
-}).catch(err=>{
-  log`an error occured: ${err}`
-});
