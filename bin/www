@@ -1,27 +1,57 @@
 let config = require("../lib/config");
+
 let formatter = require("../lib/formatter");
-var app = require("../lib/server");
+let log = formatter("sunshine:www");
 
-let log = formatter("sunny:www");
+try {
+  config.fromEnv();
+} catch (err) {
+  if (process.env.DEBUG && process.env.DEBUG.match(/sunshine:.*/)) {
+    log`configuration couldn't be parsed due to err: ${err}`;
+  } else {
+    console.error(
+      `configuration couldn't be parsed due to err: ${err.message}`
+    );
+  }
+  // Graceful exit
+  process.exitCode = 1;
+}
 
-config.fromEnv();
+let { app, http, iface, mediator } = require("../lib/server");
 
-var bot = app.bot;
-
-bot
+iface
   .login()
   .then(() => {
-    log`logged in`;
     let port = config.get("port");
 
     let host = config.get("host");
-    app.server.listen(port, host, function(err) {
+    http.listen(port, host, function(err) {
       if (err) {
-        return log`couldn\'t start server due to err: ${err}`;
+        return log`couldn\'t start server at ${`http://${host}:${port}`} due to err: ${err}`;
       }
-      log`server listening at: http://${host}:${port}`;
+      let addr = http.address();
+      log`server listening at: ${`http://${addr.address}:${addr.port}`}`;
     });
   })
   .catch(err => {
     log`an error occured: ${err}`;
   });
+
+let quit = async code => {
+  if (quit.running) {
+    return false;
+  }
+  quit.running = true;
+  log`exiting. ${code}`;
+  mediator.destroy();
+  await iface.logout();
+  process.exit();
+};
+
+quit.running = false;
+
+process.on("beforeExit", quit);
+
+process.on("SIGINT", () => {
+  quit("SIGINT");
+});
