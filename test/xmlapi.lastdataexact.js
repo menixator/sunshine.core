@@ -1,23 +1,23 @@
-const Sunshine = require("../lib/sunshine");
+const Interface = require("../lib/interface");
 const config = require('../lib/config').fromEnv();
 
-let bot = new Sunshine({
+let iface = new Interface({
   username: config.get('username'),
   password: config.get('password')
 });
 
 
-bot
+iface
   .login()
   .then(async () => {
-    let plants = await bot.getPlants();
-    let lastDataExact = await bot.lastDataExact(plants.list[0].oid);
+    let plants = await iface.getPlants();
+    let lastDataExact = await iface.lastDataExact(plants.list[0].oid);
     console.log(lastDataExact.toJSON())
-    return bot.logout();
+    return iface.logout();
   })
   .catch(err => {
     console.error(err);
-    return bot.logout();
+    return iface.logout();
   })
   .catch(err => {
     console.error(err);
