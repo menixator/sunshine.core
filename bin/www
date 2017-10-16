@@ -25,6 +25,8 @@ iface
     let port = config.get("port");
 
     let host = config.get("host");
+
+    log`trying to start the server at: ${`http://${host}:${port}`}`
     http.listen(port, host, function(err) {
       if (err) {
         return log`couldn\'t start server at ${`http://${host}:${port}`} due to err: ${err}`;
@@ -54,4 +56,8 @@ process.on("beforeExit", quit);
 
 process.on("SIGINT", () => {
   quit("SIGINT");
+});
+
+process.on('unhandledRejection', (reason, p) => {
+  console.error(reason);
 });
