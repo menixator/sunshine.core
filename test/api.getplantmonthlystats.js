@@ -13,7 +13,8 @@ let mediator = new Mediator(iface);
 iface
   .login()
   .then(async () => {
-    let powerReading = await mediator.getPlantMonthlyEnergy(
+    let powerReading = await mediator.getPlantMonthlyStats(
+      "revenue",
       "c49e2aa2-a4ec-47a4-95d0-673cbab622b0"
     );
     console.log(JSON.stringify(powerReading, null, 2));
