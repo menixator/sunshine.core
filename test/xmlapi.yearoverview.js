@@ -11,8 +11,8 @@ iface
   .login()
   .then(async () => {
     let plants = await iface.getPlants();
-    let yearOverview = await iface.yearOverview(plants.list[0].oid);
-    console.log(yearOverview)
+    let yearOverview = await iface.yearOverview(plants.list[2].oid);
+    console.log(yearOverview.toJSON())
     return iface.logout();
   })
   .catch(err => {
