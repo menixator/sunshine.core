@@ -26,7 +26,7 @@ iface
 
     let host = config.get("host");
 
-    log`trying to start the server at: ${`http://${host}:${port}`}`
+    log`trying to start the server at: ${`http://${host}:${port}`}`;
     http.listen(port, host, function(err) {
       if (err) {
         return log`couldn\'t start server at ${`http://${host}:${port}`} due to err: ${err}`;
@@ -46,8 +46,13 @@ let quit = async code => {
   quit.running = true;
   log`exiting. ${code}`;
   mediator.destroy();
-  await iface.logout();
-  process.exit();
+  try {
+    await iface.logout();
+  } catch (err) {
+    log`an error occured while trying to log out.`;
+    process.exit(1);
+  }
+  process.exit(0);
 };
 
 quit.running = false;
@@ -58,6 +63,6 @@ process.on("SIGINT", () => {
   quit("SIGINT");
 });
 
-process.on('unhandledRejection', (reason, p) => {
+process.on("unhandledRejection", (reason, p) => {
   console.error(reason);
 });
