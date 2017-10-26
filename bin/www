@@ -17,7 +17,6 @@ try {
   process.exitCode = 1;
 }
 
-
 let { app, http, iface, mediator } = require("../lib/server");
 
 iface
@@ -60,8 +59,10 @@ quit.running = false;
 
 process.on("beforeExit", quit);
 
-process.on("SIGINT", () => {
-  quit("SIGINT");
+["SIGINT", "SIGTERM"].forEach(signal => {
+  process.on("SIGINT", () => {
+    quit("SIGINT");
+  });
 });
 
 process.on("unhandledRejection", (reason, p) => {
