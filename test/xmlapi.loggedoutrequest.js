@@ -8,11 +8,10 @@ let iface = new Interface({
 
 iface
   .login()
-  .then(async (res) => {
-    await iface.logout();
-    console.log("logged in!");
-    let plants = await iface.getPlants()
-    console.log(plants.toJSON())
+  .then(async () => {
+    let plants = await iface.logout();
+    let powerReading = await iface.getPlants();
+    console.log(powerReading)
     return iface.logout();
   })
   .catch(err => {
