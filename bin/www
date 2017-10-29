@@ -60,8 +60,8 @@ quit.running = false;
 process.on("beforeExit", quit);
 
 ["SIGINT", "SIGTERM"].forEach(signal => {
-  process.on("SIGINT", () => {
-    quit("SIGINT");
+  process.on(signal, () => {
+    quit(signal);
   });
 });
 
