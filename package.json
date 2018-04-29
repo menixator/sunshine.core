@@ -1,0 +1,28 @@
+{
+  "name": "sunshine.core",
+  "version": "1.0.0",
+  "description": "Power usage/production dashboard",
+  "main": "index.js",
+  "repository": "git@github.com:menixator/sunshine.core.git",
+  "author": "menixator <ahmed.miljau@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "reflect-metadata": "^0.1.12",
+    "sqlite3": "^4.0.0",
+    "typeorm": "^0.2.3"
+  },
+  "scripts": {
+    "db:wipe": "rm -rf db/*",
+    "migrations:run": "yarn ts-node $(yarn bin)/typeorm migration:run",
+    "migrations:regenerate":
+      "yarn db:wipe && rm ./src/migrations/*.ts && yarn ts-node $(yarn bin)/typeorm migration:generate --name Genesis",
+    "seed":
+      "$(yarn bin)/ts-node -r tsconfig-paths/register src/seeds/StaticSeeds"
+  },
+  "devDependencies": {
+    "ts-node": "^6.0.1",
+    "tsconfig-paths": "^3.3.1",
+    "typescript": "^2.8.3"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "commonjs",
+    "lib": ["es2015"],
+    "outDir": "./build/",
+    "rootDir": "./src",
+    "noUnusedLocals": true,
+    "paths": {
+      "@entities/*": ["entities/*"]
+    },
+    "moduleResolution": "node",
+    "baseUrl": "./src/",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
+  },
+  "include": ["src/**/*.ts"]
+}
