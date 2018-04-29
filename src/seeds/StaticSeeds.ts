@@ -1,6 +1,7 @@
 import { createConnection } from "typeorm";
 import { Role } from "@entities/Role";
 import { User } from "@entities/User";
+import bcrypt from "bcrypt";
 
 export const run = async () => {
   const connection = await createConnection();
@@ -38,7 +39,7 @@ export const run = async () => {
   let root = new User();
   root.id = 1;
   root.name = "root";
-  root.hash = "";
+  root.hash = await bcrypt.hash("toor", 10);
 
   root.role = superuser;
 

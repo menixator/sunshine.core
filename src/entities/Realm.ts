@@ -3,7 +3,8 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  OneToMany
+  OneToMany,
+  Index
 } from "typeorm";
 import { Cluster } from "./Cluster";
 import { Equipment } from "./Equipment";
@@ -12,6 +13,7 @@ import { Equipment } from "./Equipment";
 export class Realm {
   @PrimaryGeneratedColumn() id: number;
 
+  @Index({unique: true})
   @Column() name: string;
 
   @ManyToOne(type => Cluster, realm => realm.children)
