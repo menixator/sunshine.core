@@ -6,16 +6,24 @@ import {
   OneToMany
 } from "typeorm";
 import { User } from "./User";
+import { ObjectType, Field, Int } from "type-graphql";
 
 @Entity("roles")
+@ObjectType({
+  description: "Represents a predefined role set"
+})
 export class Role {
-  @PrimaryGeneratedColumn() id: number;
+  @Field(type => Int)
+  @PrimaryGeneratedColumn()
+  id: number;
 
+  @Field()
   @Index({ unique: true })
   @Column()
   name: string;
 
-  @OneToMany(type => User, user => user.id, {
+  @Field(type => [User])
+  @OneToMany(type => User, user => user.role, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE"
   })

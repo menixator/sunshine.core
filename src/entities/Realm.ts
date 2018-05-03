@@ -8,17 +8,27 @@ import {
 } from "typeorm";
 import { Cluster } from "./Cluster";
 import { Equipment } from "./Equipment";
+import { ObjectType, Field, Int } from "@typeql";
 
 @Entity("realms")
+@ObjectType({
+  description: "Represents a singular location"
+})
 export class Realm {
-  @PrimaryGeneratedColumn() id: number;
+  @Field(type => Int)
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Index({unique: true})
-  @Column() name: string;
+  @Field({ description: "The name of the location" })
+  @Index({ unique: true })
+  @Column()
+  name: string;
 
-  @ManyToOne(type => Cluster, realm => realm.children)
+  @Field(type => Cluster, { description: "Parent cluster", nullable: true })
+  @ManyToOne(type => Cluster, realm => realm.children, { nullable: true })
   parent: Cluster;
 
+  @Field(type => [Equipment], { description: "Equipment(s) in the location" })
   @OneToMany(type => Equipment, equipment => equipment.location)
   equipments: Equipment[];
 }

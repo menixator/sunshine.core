@@ -1,33 +1,44 @@
+import { CounterDefinition } from "@entities/CounterDefinition";
+import { MeasurementDefinition } from "@entities/MeasurementDefinition";
+import { Field, Int, ObjectType } from "@typeql";
 import {
   Column,
   Entity,
-  PrimaryGeneratedColumn,
+  Index,
   ManyToOne,
-  OneToMany,
-  Index
+  PrimaryGeneratedColumn,
+  Unique
 } from "typeorm";
 import { Realm } from "./Realm";
-import { InstantaneousMeasurement } from "./InstantaneousMeasurement";
-import { Measurement } from "./Measurement";
 
 @Entity("equipments")
+@Unique("realm_equipment_idx", ["location", "name"])
+@ObjectType({
+  description: "Represents a piece of equipment"
+})
 export class Equipment {
-  @PrimaryGeneratedColumn() id: number;
-  @Column() name: string;
+  @Field(type => Int)
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @ManyToOne(type => Realm, realm => realm.equipments)
+  @Field({ nullable: false })
+  @Column({ nullable: false })
+  name: string;
+
+  @Field(type => Realm, { nullable: false })
+  @ManyToOne(type => Realm, realm => realm.equipments, { nullable: false })
   location: Realm;
 
+  @Field({ nullable: false })
   @Index({ unique: true })
   @Column({ nullable: false })
   comparator: String;
 
-  @OneToMany(
-    type => InstantaneousMeasurement,
-    measurement => measurement.equipment
-  )
-  instantenousMeasurements: InstantaneousMeasurement[];
+  @Field(type => [MeasurementDefinition])
+  @ManyToOne(type => MeasurementDefinition)
+  measurements: MeasurementDefinition[];
 
-  @OneToMany(type => Measurement, measurement => measurement.equipment)
-  measurements: Measurement[];
+  @Field(type => [CounterDefinition])
+  @ManyToOne(type => CounterDefinition)
+  counters: CounterDefinition[];
 }

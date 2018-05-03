@@ -2,19 +2,23 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "lib": ["es2015"],
+    "lib": ["es2015", "esnext.asynciterable"],
     "outDir": "./build/",
     "rootDir": "./src",
     "noUnusedLocals": true,
     "paths": {
-      "@entities/*": ["entities/*"]
+      "@entities/*": ["entities/*"],
+      "@typeql": ["../node_modules/type-graphql"]
     },
     "moduleResolution": "node",
     "baseUrl": "./src/",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "strictNullChecks": true
   },
   "include": ["src/**/*.ts"]
 }

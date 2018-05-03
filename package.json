@@ -15,18 +15,23 @@
     "graphql": "^0.13.2",
     "reflect-metadata": "^0.1.12",
     "sqlite3": "^4.0.0",
+    "type-graphql": "^0.11.2",
+    "typedi": "^0.7.2",
     "typeorm": "^0.2.3",
+    "typeorm-typedi-extensions": "^0.2.1",
     "uuid": "^3.2.1"
   },
   "scripts": {
-    "db:wipe": "rm -rf db/*",
-    "migrations:run": "yarn ts-node $(yarn bin)/typeorm migration:run",
-    "migrations:regenerate": "yarn db:wipe && rm ./src/migrations/*.ts && yarn ts-node $(yarn bin)/typeorm migration:generate --name Genesis",
-    "seed": "$(yarn bin)/ts-node -r tsconfig-paths/register src/seeds/StaticSeeds",
-    "start": "$(yarn bin)/ts-node -r tsconfig-paths/register src/main"
+    "db:wipe": "rm -f db/*",
+    "migrations:run": "ts-node -r tsconfig-paths/register $(yarn bin)/typeorm migration:run",
+    "migrations:regenerate": "yarn db:wipe && rm -f ./src/migrations/*.ts && ts-node -r tsconfig-paths/register $(yarn bin)/typeorm migration:generate --name Genesis",
+    "seed": "ts-node -r tsconfig-paths/register src/seeds/StaticSeeds",
+    "start": "ts-node -r tsconfig-paths/register src/main",
+    "vanitycheck": "grep --color=auto -P '(\\.?\\./){1,}|type-graphql' -R ./src/*"
   },
   "devDependencies": {
     "@types/bcrypt": "^2.0.0",
+    "@types/cookie-parser": "^1.4.1",
     "@types/express": "^4.11.1",
     "@types/express-graphql": "^0.6.1",
     "@types/graphql": "^0.13.0",
