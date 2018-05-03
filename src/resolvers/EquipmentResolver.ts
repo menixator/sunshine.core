@@ -56,7 +56,11 @@ export class EquipmentResolver {
     realmId
   }: AddEquipmentInput): Promise<Equipment> {
     let realm = this.equipmentRepo.create({
-      name
+      name,
+      comparator,
+      location: {
+        id: realmId
+      }
     });
 
     return this.equipmentRepo.save(realm);
