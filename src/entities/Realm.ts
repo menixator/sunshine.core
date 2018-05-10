@@ -25,10 +25,10 @@ export class Realm {
   name: string;
 
   @Field(type => Cluster, { description: "Parent cluster", nullable: true })
-  @ManyToOne(type => Cluster, realm => realm.children, { nullable: true })
-  parent: Cluster;
+  @ManyToOne(type => Cluster, cluster => cluster.realms, { nullable: true })
+  cluster: Cluster;
 
   @Field(type => [Equipment], { description: "Equipment(s) in the location" })
-  @OneToMany(type => Equipment, equipment => equipment.location)
+  @OneToMany(type => Equipment, equipment => equipment.realm)
   equipments: Equipment[];
 }

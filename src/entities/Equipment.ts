@@ -12,7 +12,7 @@ import {
 import { Realm } from "./Realm";
 
 @Entity("equipments")
-@Unique("realm_equipment_idx", ["location", "name"])
+@Unique("realm_equipment_idx", ["realm", "name"])
 @ObjectType({
   description: "Represents a piece of equipment"
 })
@@ -27,7 +27,7 @@ export class Equipment {
 
   @Field(type => Realm, { nullable: false })
   @ManyToOne(type => Realm, realm => realm.equipments, { nullable: false })
-  location: Realm;
+  realm: Realm;
 
   @Field({ nullable: false })
   @Index({ unique: true })

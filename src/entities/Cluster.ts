@@ -27,6 +27,6 @@ export class Cluster {
   @Field(type => [Realm], {
     description: "Realms contained in the cluster"
   })
-  @OneToMany(type => Realm, equipment => equipment.id)
-  children: Realm[];
+  @OneToMany(type => Realm, realm => realm.cluster)
+  realms: Realm[];
 }
