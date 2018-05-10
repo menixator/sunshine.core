@@ -1,20 +1,9 @@
-import {
-  Arg,
-  ArgsType,
-  Field,
-  Int,
-  Mutation,
-  Query,
-  Resolver,
-  Args,
-  FieldResolver,
-  Root
-} from "@typeql";
+import { MeasurementDefinition } from "@entities/MeasurementDefinition";
+import { Arg, Args, ArgsType, Field, FieldResolver, Int, Mutation, Query, Resolver, Root } from "@typeql";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Equipment } from "../entities/Equipment";
 import { PaginationArgs } from "../types/Pagination";
-import { Realm } from "@entities/Realm";
 
 @ArgsType()
 export class AddEquipmentInput implements Partial<Equipment> {
@@ -58,7 +47,7 @@ export class EquipmentResolver {
     let realm = this.equipmentRepo.create({
       name,
       comparator,
-      location: {
+      realm: {
         id: realmId
       }
     });
@@ -85,17 +74,17 @@ export class EquipmentResolver {
     });
   }
 
-  @FieldResolver(type => [Realm])
-  async children(
+  @FieldResolver(type => [MeasurementDefinition])
+  async measurements(
     @Root() realm: Equipment,
     @Args() { skip, take }: PaginationArgs
-  ): Promise<Realm[]> {
+  ): Promise<MeasurementDefinition[]> {
     return (await this.equipmentRepo
       .createQueryBuilder()
       .take(take)
       .skip(skip)
-      .relation(Equipment, "children")
+      .relation(Equipment, "measurements")
       .of(realm)
-      .loadMany()) as Realm[];
+      .loadMany()) as MeasurementDefinition[];
   }
 }

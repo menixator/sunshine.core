@@ -83,6 +83,7 @@ export class ClusterResolver {
       .skip(skip)
       .relation(Cluster, "children")
       .of(realm)
+      .printSql()
       .loadMany()) as Realm[];
   }
 }

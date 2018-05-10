@@ -10,12 +10,20 @@ import {
   Mutation,
   Query,
   Resolver,
-  Root
+  Root,
+  Ctx
 } from "@typeql";
 import bcrypt from "bcrypt";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { PaginationArgs } from "../types/Pagination";
+import { RootContext } from "main";
+
+@ArgsType()
+export class LoginInput implements Partial<User> {
+  @Field() name: string;
+  @Field() password: string;
+}
 
 @ArgsType()
 export class AddUserInput implements Partial<User> {
@@ -56,6 +64,21 @@ export class UserResolver {
         id: id
       }
     });
+  }
+
+  @Query(type => User, { nullable: true })
+  whoami(@Ctx() { auth }: RootContext) {
+    if (!auth.authorized) {
+      return null;
+    }
+
+    return auth.user;
+  }
+
+  @Mutation(type => User)
+  async login(@Args() { password, name }: LoginInput, @Ctx() { auth }: RootContext){
+    await auth.login(name, password);
+    return auth.user;
   }
 
   @Mutation(type => User)
