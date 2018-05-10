@@ -1,6 +1,6 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class genesis1525339425791 implements MigrationInterface {
+export class genesis1525929480733 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query(`CREATE TABLE "roles" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL)`);
@@ -16,9 +16,9 @@ export class genesis1525339425791 implements MigrationInterface {
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_fcbf3349ecfe991a4a1b28bab1" ON "named_time_ranges" ("name") `);
         await queryRunner.query(`CREATE TABLE "measurement_readings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "value" integer NOT NULL, "date" datetime NOT NULL, "definitionId" integer NOT NULL)`);
         await queryRunner.query(`CREATE TABLE "measurement_definitions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "rangeId" integer, "unitId" integer NOT NULL, "equipmentId" integer NOT NULL, CONSTRAINT "equipment_measurement_definition" UNIQUE ("equipmentId", "name"))`);
-        await queryRunner.query(`CREATE TABLE "equipments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "comparator" varchar NOT NULL, "locationId" integer NOT NULL, "measurementsId" integer, "countersId" integer, CONSTRAINT "realm_equipment_idx" UNIQUE ("locationId", "name"))`);
+        await queryRunner.query(`CREATE TABLE "equipments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "comparator" varchar NOT NULL, "realmId" integer NOT NULL, "measurementsId" integer, "countersId" integer, CONSTRAINT "realm_equipment_idx" UNIQUE ("realmId", "name"))`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_a8cfc2466b08483257f8b6b600" ON "equipments" ("comparator") `);
-        await queryRunner.query(`CREATE TABLE "realms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "parentId" integer)`);
+        await queryRunner.query(`CREATE TABLE "realms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "clusterId" integer)`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_2c98e0f24ec2b22c32928cd6a4" ON "realms" ("name") `);
         await queryRunner.query(`CREATE TABLE "clusters" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL)`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_9866753a0c6ffd4adebb5cc236" ON "clusters" ("name") `);
@@ -53,14 +53,14 @@ export class genesis1525339425791 implements MigrationInterface {
         await queryRunner.query(`DROP TABLE "measurement_definitions"`);
         await queryRunner.query(`ALTER TABLE "temporary_measurement_definitions" RENAME TO "measurement_definitions"`);
         await queryRunner.query(`DROP INDEX "IDX_a8cfc2466b08483257f8b6b600"`);
-        await queryRunner.query(`CREATE TABLE "temporary_equipments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "comparator" varchar NOT NULL, "locationId" integer NOT NULL, "measurementsId" integer, "countersId" integer, CONSTRAINT "realm_equipment_idx" UNIQUE ("locationId", "name"), CONSTRAINT "FK_b28ca28d82d6b0109f30d9580b8" FOREIGN KEY ("locationId") REFERENCES "realms" ("id"), CONSTRAINT "FK_b189cdf1548b5159f76b3492e2b" FOREIGN KEY ("measurementsId") REFERENCES "measurement_definitions" ("id"), CONSTRAINT "FK_84b0162991ee5d46bf2c96d2ff2" FOREIGN KEY ("countersId") REFERENCES "counter_definition" ("id"))`);
-        await queryRunner.query(`INSERT INTO "temporary_equipments"("id", "name", "comparator", "locationId", "measurementsId", "countersId") SELECT "id", "name", "comparator", "locationId", "measurementsId", "countersId" FROM "equipments"`);
+        await queryRunner.query(`CREATE TABLE "temporary_equipments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "comparator" varchar NOT NULL, "realmId" integer NOT NULL, "measurementsId" integer, "countersId" integer, CONSTRAINT "realm_equipment_idx" UNIQUE ("realmId", "name"), CONSTRAINT "FK_cba42256e8cc32cd2c54ad552f1" FOREIGN KEY ("realmId") REFERENCES "realms" ("id"), CONSTRAINT "FK_b189cdf1548b5159f76b3492e2b" FOREIGN KEY ("measurementsId") REFERENCES "measurement_definitions" ("id"), CONSTRAINT "FK_84b0162991ee5d46bf2c96d2ff2" FOREIGN KEY ("countersId") REFERENCES "counter_definition" ("id"))`);
+        await queryRunner.query(`INSERT INTO "temporary_equipments"("id", "name", "comparator", "realmId", "measurementsId", "countersId") SELECT "id", "name", "comparator", "realmId", "measurementsId", "countersId" FROM "equipments"`);
         await queryRunner.query(`DROP TABLE "equipments"`);
         await queryRunner.query(`ALTER TABLE "temporary_equipments" RENAME TO "equipments"`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_a8cfc2466b08483257f8b6b600" ON "equipments" ("comparator") `);
         await queryRunner.query(`DROP INDEX "IDX_2c98e0f24ec2b22c32928cd6a4"`);
-        await queryRunner.query(`CREATE TABLE "temporary_realms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "parentId" integer, CONSTRAINT "FK_65075fc5e8cbe6a98aa6b34c29c" FOREIGN KEY ("parentId") REFERENCES "clusters" ("id"))`);
-        await queryRunner.query(`INSERT INTO "temporary_realms"("id", "name", "parentId") SELECT "id", "name", "parentId" FROM "realms"`);
+        await queryRunner.query(`CREATE TABLE "temporary_realms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "clusterId" integer, CONSTRAINT "FK_cb5956e7fbd2dd9c50d113f2464" FOREIGN KEY ("clusterId") REFERENCES "clusters" ("id"))`);
+        await queryRunner.query(`INSERT INTO "temporary_realms"("id", "name", "clusterId") SELECT "id", "name", "clusterId" FROM "realms"`);
         await queryRunner.query(`DROP TABLE "realms"`);
         await queryRunner.query(`ALTER TABLE "temporary_realms" RENAME TO "realms"`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_2c98e0f24ec2b22c32928cd6a4" ON "realms" ("name") `);
@@ -69,14 +69,14 @@ export class genesis1525339425791 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query(`DROP INDEX "IDX_2c98e0f24ec2b22c32928cd6a4"`);
         await queryRunner.query(`ALTER TABLE "realms" RENAME TO "temporary_realms"`);
-        await queryRunner.query(`CREATE TABLE "realms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "parentId" integer)`);
-        await queryRunner.query(`INSERT INTO "realms"("id", "name", "parentId") SELECT "id", "name", "parentId" FROM "temporary_realms"`);
+        await queryRunner.query(`CREATE TABLE "realms" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "clusterId" integer)`);
+        await queryRunner.query(`INSERT INTO "realms"("id", "name", "clusterId") SELECT "id", "name", "clusterId" FROM "temporary_realms"`);
         await queryRunner.query(`DROP TABLE "temporary_realms"`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_2c98e0f24ec2b22c32928cd6a4" ON "realms" ("name") `);
         await queryRunner.query(`DROP INDEX "IDX_a8cfc2466b08483257f8b6b600"`);
         await queryRunner.query(`ALTER TABLE "equipments" RENAME TO "temporary_equipments"`);
-        await queryRunner.query(`CREATE TABLE "equipments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "comparator" varchar NOT NULL, "locationId" integer NOT NULL, "measurementsId" integer, "countersId" integer, CONSTRAINT "realm_equipment_idx" UNIQUE ("locationId", "name"))`);
-        await queryRunner.query(`INSERT INTO "equipments"("id", "name", "comparator", "locationId", "measurementsId", "countersId") SELECT "id", "name", "comparator", "locationId", "measurementsId", "countersId" FROM "temporary_equipments"`);
+        await queryRunner.query(`CREATE TABLE "equipments" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "comparator" varchar NOT NULL, "realmId" integer NOT NULL, "measurementsId" integer, "countersId" integer, CONSTRAINT "realm_equipment_idx" UNIQUE ("realmId", "name"))`);
+        await queryRunner.query(`INSERT INTO "equipments"("id", "name", "comparator", "realmId", "measurementsId", "countersId") SELECT "id", "name", "comparator", "realmId", "measurementsId", "countersId" FROM "temporary_equipments"`);
         await queryRunner.query(`DROP TABLE "temporary_equipments"`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_a8cfc2466b08483257f8b6b600" ON "equipments" ("comparator") `);
         await queryRunner.query(`ALTER TABLE "measurement_definitions" RENAME TO "temporary_measurement_definitions"`);
