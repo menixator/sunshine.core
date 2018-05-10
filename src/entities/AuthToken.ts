@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { User } from "./User";
 import { ObjectType, Field } from "@typeql";
+import uuid from "uuid/v4";
 
 export const LAST_TOUCHED_EXPIRATION = 1 * 24 * 60 * 60 * 1000;
 
@@ -16,6 +17,11 @@ export const LAST_TOUCHED_EXPIRATION = 1 * 24 * 60 * 60 * 1000;
   description: "A token used to keep a user logged into the application"
 })
 export class AuthToken {
+
+  static generateToken(){
+    return uuid();
+  }
+
   @Field({
     description: "Authentication token identifier"
   })
