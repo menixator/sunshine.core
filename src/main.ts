@@ -1,7 +1,8 @@
+import "reflect-metadata";
 import cp from "cookie-parser";
 import express, { Request, Response } from "express";
-import eGraphql from "express-graphql";
-import "reflect-metadata";
+import { graphqlExpress, graphiqlExpress } from "apollo-server-express";
+import { GraphQLOptions } from "apollo-server-core";
 import {
   createConnection,
   useContainer as typeORMUserContainer
@@ -12,10 +13,10 @@ import {
   buildSchema
 } from "type-graphql";
 import { Container } from "typedi";
+import { AuthorizationProvider } from "./AuthorizationProvider";
 
 typeORMUserContainer(Container);
 typeGraphQLUseContainer(Container);
-import { AuthorizationProvider } from "AuthorizationProvider";
 
 export type RootSource = null;
 
@@ -31,6 +32,7 @@ app.use(cp());
 
 app.use("/api/v1", async (req, res, next) => {
   res.locals.auth = AuthorizationProvider.create(req, res);
+  await res.locals.auth.checkStatus();
   await res.locals.auth.touch();
   next();
 });
@@ -44,26 +46,30 @@ async function main() {
 
   app.use(
     "/api/v1",
-    eGraphql((req, res) => {
+    express.json(),
+    graphqlExpress((req, res): GraphQLOptions => {
+      
       return {
-        graphiql: true,
         schema,
         context: <RootContext>{
-          req: req,
-          res: res,
-          auth: res.locals.auth
-        },
-        formatError(err) {
-          console.log(err.stack);
-          return err;
+          req: req!,
+          res: res!,
+          auth: res!.locals.auth
         }
       };
     })
   );
 
   app.listen(3001);
-  console.log(`started listening at http://localhost:${3001})}`);
+  console.log(`started listening at http://localhost:${3001}`);
 }
+
+app.use(
+  "/graphiql",
+  graphiqlExpress({
+    endpointURL: "/api/v1"
+  })
+);
 
 main().catch(err => {
   console.error(err);
