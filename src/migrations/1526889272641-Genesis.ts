@@ -1,6 +1,6 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
 
-export class genesis1526803661961 implements MigrationInterface {
+export class genesis1526889272641 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<any> {
         await queryRunner.query(`CREATE TABLE "roles" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL)`);
@@ -12,7 +12,7 @@ export class genesis1526803661961 implements MigrationInterface {
         await queryRunner.query(`CREATE TABLE "derived_unit" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "singular" varchar NOT NULL, "plural" varchar NOT NULL, "symSingular" varchar NOT NULL, "symPlural" varchar NOT NULL, "mult" integer NOT NULL, "parentId" integer NOT NULL)`);
         await queryRunner.query(`CREATE TABLE "units" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "singular" varchar NOT NULL, "plural" varchar NOT NULL, "symSingular" varchar NOT NULL, "symPlural" varchar NOT NULL)`);
         await queryRunner.query(`CREATE TABLE "counter_definition" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "equipmentId" integer, "unitId" integer, CONSTRAINT "equipment_counter_definition" UNIQUE ("equipmentId", "name"))`);
-        await queryRunner.query(`CREATE TABLE "named_time_ranges" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "duration" integer NOT NULL)`);
+        await queryRunner.query(`CREATE TABLE "named_time_ranges" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL)`);
         await queryRunner.query(`CREATE UNIQUE INDEX "IDX_fcbf3349ecfe991a4a1b28bab1" ON "named_time_ranges" ("name") `);
         await queryRunner.query(`CREATE TABLE "measurement_readings" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "value" integer NOT NULL, "date" datetime NOT NULL, "definitionId" integer NOT NULL)`);
         await queryRunner.query(`CREATE TABLE "measurement_definitions" ("id" integer PRIMARY KEY AUTOINCREMENT NOT NULL, "name" varchar NOT NULL, "rangeId" integer, "unitId" integer NOT NULL, "equipmentId" integer NOT NULL, CONSTRAINT "equipment_measurement_definition" UNIQUE ("equipmentId", "name"))`);
