@@ -1,54 +1,160 @@
-import { createConnection } from "typeorm";
+import { Cluster } from "@entities/Cluster";
+import { Equipment } from "@entities/Equipment";
+import { Realm } from "@entities/Realm";
 import { Role } from "@entities/Role";
 import { User } from "@entities/User";
 import bcrypt from "bcrypt";
+import { ROLES } from "roles";
+import { Container } from "typedi";
+import {
+  EntityManager,
+  EntitySchema,
+  Transaction,
+  createConnection,
+  useContainer as typeORMUserContainer
+} from "typeorm";
+import { InjectManager } from "typeorm-typedi-extensions";
+import { Unit } from "@entities/Unit";
+import { DerivedUnit } from "@entities/DerivedUnit";
 
-export const run = async () => {
-  const connection = await createConnection();
-  const manager = connection.manager;
+typeORMUserContainer(Container);
 
-  let roleMeta = connection.getMetadata(Role);
+class MonolithicSeed {
+  @InjectManager() manager: EntityManager;
 
-  await manager.query(`DELETE FROM sqlite_sequence where name = :name`, [
-    roleMeta.tableName
-  ]);
+  public static runInstance() {
+    createConnection().then(() => {
+      Container.get(MonolithicSeed)
+        .start()
+        .then(() => {
+          console.log(`done seeding`);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    });
+  }
 
-  await manager
-    .createQueryBuilder()
-    .delete()
-    .from(Role)
-    .execute();
+  private getMetadata(entity: Function | EntitySchema<any>) {
+    return this.manager.connection.getMetadata(entity);
+  }
 
-  let superuser = new Role();
-  superuser.id = 1;
-  superuser.name = "superuser";
-  await manager.save(superuser);
+  private async emptyAndWipeIndices(
+    entity: Function | EntitySchema<any>
+  ): Promise<void> {
+    await this.manager.getRepository(entity).clear();
+    await this.manager.query(`DELETE FROM sqlite_sequence where name = :name`, [
+      this.getMetadata(entity).tableName
+    ]);
+  }
 
-  await manager
-    .createQueryBuilder()
-    .delete()
-    .from(User)
-    .execute();
+  async start(): Promise<void> {
+    await this.roleSeeds();
+    await this.userSeeds();
+    await this.realmSeeds();
+    await this.clusterSeeds();
+    await this.unitSeeds();
+    await this.equipmentSeeds();
+  }
 
-  let userMeta = connection.getMetadata(User);
+  @Transaction()
+  private async roleSeeds(): Promise<void> {
+    await this.emptyAndWipeIndices(Role);
+    await this.manager.save(
+      Role,
+      ROLES.map((role, id) => ({ id: id + 1, name: role.name }))
+    );
+  }
 
-  await manager.query(`DELETE FROM sqlite_sequence where name = :name`, [
-    userMeta.tableName
-  ]);
+  @Transaction()
+  private async userSeeds(): Promise<void> {
+    await this.emptyAndWipeIndices(User);
+    let superuser = await this.manager.getRepository(Role).findOneOrFail({
+      where: {
+        name: "superuser"
+      }
+    });
 
-  let root = new User();
-  root.id = 1;
-  root.name = "root";
-  root.hash = await bcrypt.hash("toor", 10);
+    await this.manager
+      .getRepository(User)
+      .save([
+        { name: "root", role: superuser, hash: await bcrypt.hash("toor", 10) }
+      ]);
+  }
 
-  root.role = superuser;
+  @Transaction()
+  private async unitSeeds(): Promise<void> {
+    await this.emptyAndWipeIndices(Unit);
+    let watts = new Unit();
 
-  await manager.save(root);
-  return;
-};
+    watts.plural = "Watts";
+    watts.symPlural = "W";
+    watts.singular = "Watt";
+    watts.symSingular = "W";
 
-console.log("pushing static seeds");
+    let kiloWatts = new DerivedUnit();
 
-run().catch(err => console.error(err));
+    kiloWatts.mult = 1000;
+    kiloWatts.singular = "KiloWatt";
+    kiloWatts.plural = "KiloWatts";
+    kiloWatts.symPlural = "kW";
+    kiloWatts.symSingular = "kW";
 
-export const up = () => {};
+    watts.derivedUnits = [kiloWatts];
+
+    await this.manager.save(watts);
+  }
+
+  @Transaction()
+  private async equipmentSeeds(): Promise<void> {
+    await this.emptyAndWipeIndices(Equipment);
+    for (let i = 0; i < 100; i++) {
+      let realm = await this.manager
+        .createQueryBuilder(Realm, "realm")
+        .orderBy("RANDOM()")
+        .limit(1)
+        .getOne();
+
+      let equipment = new Equipment();
+      equipment.name = Date.now().toString(16);
+      equipment.comparator = "seeded-equipment/1/ORM-SEEDER/" + equipment.name;
+      equipment.realm = realm!;
+      this.manager.save(equipment);
+    }
+  }
+
+  @Transaction()
+  private async clusterSeeds(): Promise<void> {
+    await this.emptyAndWipeIndices(Cluster);
+
+    for (let i = 0; i < 100; i++) {
+      let cluster = new Cluster();
+      cluster.name = "Demo Cluster - #" + i;
+      await this.manager.save(cluster);
+
+      for (let k = 0; k < Math.random() * 50; k++) {
+        let realm = new Realm();
+        realm.name = `Cluster ${i} - Realm ${k}`;
+        realm.cluster = cluster;
+        await this.manager.save(realm);
+      }
+    }
+  }
+
+  @Transaction()
+  private async realmSeeds(): Promise<void> {
+    await this.emptyAndWipeIndices(Realm);
+
+    let realmsToAdd: Realm[] = [];
+
+    for (let i = 0; i < Math.random() * 50; i++) {
+      let realm = new Realm();
+      realm.name = `Cluster ${i} - Realm ${i}`;
+      realmsToAdd.push(realm);
+    }
+
+    await this.manager.save(realmsToAdd);
+  }
+}
+
+MonolithicSeed.runInstance();
