@@ -73,7 +73,7 @@ export class ClusterResolver {
   }
 
   @FieldResolver(type => [Realm])
-  async children(
+  async realms(
     @Root() realm: Cluster,
     @Args() { skip, take }: PaginationArgs
   ): Promise<Realm[]> {
@@ -81,9 +81,8 @@ export class ClusterResolver {
       .createQueryBuilder()
       .take(take)
       .skip(skip)
-      .relation(Cluster, "children")
+      .relation(Cluster, "realms")
       .of(realm)
-      .printSql()
       .loadMany()) as Realm[];
   }
 }

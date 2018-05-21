@@ -78,7 +78,7 @@ export class RealmResolver {
 
     await this.realmRepo
       .createQueryBuilder()
-      .relation(Realm, "parent")
+      .relation(Realm, "cluster")
       .of(realm)
       .set(clusterId);
 
@@ -93,7 +93,7 @@ export class RealmResolver {
 
     await this.realmRepo
       .createQueryBuilder()
-      .relation(Realm, "parent")
+      .relation(Realm, "cluster")
       .of(realm)
       .set(null);
 
@@ -123,7 +123,7 @@ export class RealmResolver {
   }
 
   @FieldResolver(type => Cluster, { nullable: true })
-  async parent(
+  async cluster(
     @Root() realm: Realm,
     @Args() { skip, take }: PaginationArgs
   ): Promise<Cluster> {
@@ -131,7 +131,7 @@ export class RealmResolver {
       .createQueryBuilder()
       .take(take)
       .skip(skip)
-      .relation(Realm, "parent")
+      .relation(Realm, "cluster")
       .of(realm)
       .loadOne()) as Cluster;
   }

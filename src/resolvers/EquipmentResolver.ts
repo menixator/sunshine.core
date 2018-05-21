@@ -1,9 +1,21 @@
 import { MeasurementDefinition } from "@entities/MeasurementDefinition";
-import { Arg, Args, ArgsType, Field, FieldResolver, Int, Mutation, Query, Resolver, Root } from "@typeql";
+import {
+  Arg,
+  Args,
+  ArgsType,
+  Field,
+  FieldResolver,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+  Root
+} from "@typeql";
 import { Repository } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { Equipment } from "../entities/Equipment";
 import { PaginationArgs } from "../types/Pagination";
+import { CounterDefinition } from "@entities/CounterDefinition";
 
 @ArgsType()
 export class AddEquipmentInput implements Partial<Equipment> {
@@ -76,7 +88,7 @@ export class EquipmentResolver {
 
   @FieldResolver(type => [MeasurementDefinition])
   async measurements(
-    @Root() realm: Equipment,
+    @Root() equipment: Equipment,
     @Args() { skip, take }: PaginationArgs
   ): Promise<MeasurementDefinition[]> {
     return (await this.equipmentRepo
@@ -84,7 +96,21 @@ export class EquipmentResolver {
       .take(take)
       .skip(skip)
       .relation(Equipment, "measurements")
-      .of(realm)
+      .of(equipment)
       .loadMany()) as MeasurementDefinition[];
+  }
+
+  @FieldResolver(type => [MeasurementDefinition])
+  async counters(
+    @Root() equipment: Equipment,
+    @Args() { skip, take }: PaginationArgs
+  ): Promise<CounterDefinition[]> {
+    return (await this.equipmentRepo
+      .createQueryBuilder()
+      .take(take)
+      .skip(skip)
+      .relation(Equipment, "counters")
+      .of(equipment)
+      .loadMany()) as CounterDefinition[];
   }
 }
