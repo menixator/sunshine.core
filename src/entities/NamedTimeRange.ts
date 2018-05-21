@@ -14,12 +14,4 @@ export class NamedTimeRange {
   @Column({ nullable: false })
   @Index({ unique: true })
   name: string;
-
-  @Field(type => Int, {
-    nullable: false,
-    description:
-      "The duration(in milliseconds) that the pre-defined time range represents"
-  })
-  @Column({ nullable: false })
-  duration: number;
 }

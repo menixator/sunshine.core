@@ -16,6 +16,8 @@ import {
 import { InjectManager } from "typeorm-typedi-extensions";
 import { Unit } from "@entities/Unit";
 import { DerivedUnit } from "@entities/DerivedUnit";
+import { MeasurementDefinition } from "@entities/MeasurementDefinition";
+import { NamedTimeRange } from "@entities/NamedTimeRange";
 
 typeORMUserContainer(Container);
 
@@ -54,6 +56,7 @@ class MonolithicSeed {
     await this.realmSeeds();
     await this.clusterSeeds();
     await this.unitSeeds();
+    await this.namedTimeRangeSeeds();
     await this.equipmentSeeds();
   }
 
@@ -106,8 +109,24 @@ class MonolithicSeed {
   }
 
   @Transaction()
+  private async namedTimeRangeSeeds() {
+    await this.emptyAndWipeIndices(NamedTimeRange);
+
+    let day = new NamedTimeRange();
+    day.name = "Day";
+
+    let week = new NamedTimeRange();
+    week.name = "Week";
+
+    let month = new NamedTimeRange();
+    month.name = "Month";
+    await this.manager.save([day, week, month]);
+  }
+
+  @Transaction()
   private async equipmentSeeds(): Promise<void> {
     await this.emptyAndWipeIndices(Equipment);
+    await this.emptyAndWipeIndices(MeasurementDefinition);
     for (let i = 0; i < 100; i++) {
       let realm = await this.manager
         .createQueryBuilder(Realm, "realm")
@@ -120,6 +139,23 @@ class MonolithicSeed {
       equipment.comparator = "seeded-equipment/1/ORM-SEEDER/" + equipment.name;
       equipment.realm = realm!;
       this.manager.save(equipment);
+
+      if (Math.random() > 0.5) {
+        continue;
+      }
+
+      let measurementDefinition = new MeasurementDefinition();
+
+      measurementDefinition.name = "Measurement/" + Date.now().toString(16);
+      measurementDefinition.range = await this.manager.findOneOrFail(
+        NamedTimeRange,
+        {
+          where: {
+            name: ["Month", "Year", "Day"][Math.floor(Math.random() * 3)]
+          }
+        }
+      );
+      this.manager.save(measurementDefinition);
     }
   }
 
