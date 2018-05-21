@@ -19,11 +19,15 @@ export class CounterDefinition {
   name: string;
 
   @Field(type => Equipment)
-  @ManyToOne(type => Equipment, equipment => equipment.counters)
+  @ManyToOne(type => Equipment, equipment => equipment.counters,  {
+    onDelete: "CASCADE"
+  })
   equipment: Equipment;
 
   @Field(type => Unit)
-  @ManyToOne(type => Unit)
+  @ManyToOne(type => Unit,  {
+    onDelete: "CASCADE"
+  })
   unit: Unit;
 
   @Field(type => [CounterReading])

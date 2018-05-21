@@ -22,9 +22,8 @@ export class User {
     description: "The Role of the user"
   })
   @ManyToOne(type => Role, role => role.users, {
-    nullable: false,
     onDelete: "CASCADE",
-    onUpdate: "CASCADE"
+    nullable: false
   })
   role: Role;
 

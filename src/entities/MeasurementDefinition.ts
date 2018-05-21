@@ -28,20 +28,29 @@ export class MeasurementDefinition {
   name: string;
 
   @Field()
-  @ManyToOne(type => NamedTimeRange)
+  @ManyToOne(type => NamedTimeRange, {
+    onDelete: "CASCADE"
+  })
   range: NamedTimeRange;
 
   @Field(type => Unit, { nullable: false })
-  @ManyToOne(type => Unit, { nullable: false })
+  @ManyToOne(type => Unit, {
+    nullable: false,
+    onDelete: "CASCADE"
+  })
   unit: Unit;
 
   @Field(type => Equipment, { nullable: false })
   @ManyToOne(type => Equipment, equipment => equipment.measurements, {
-    nullable: false
+    nullable: false,
+    onDelete: "CASCADE"
   })
   equipment: Equipment;
 
   @Field(type => [MeasurementReading])
-  @OneToMany(type => MeasurementReading, reading => reading.id)
+  @OneToMany(type => MeasurementReading, reading => reading.id, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE"
+  })
   readings: MeasurementReading[];
 }

@@ -17,8 +17,7 @@ export const LAST_TOUCHED_EXPIRATION = 1 * 24 * 60 * 60 * 1000;
   description: "A token used to keep a user logged into the application"
 })
 export class AuthToken {
-
-  static generateToken(){
+  static generateToken() {
     return uuid();
   }
 
@@ -47,7 +46,9 @@ export class AuthToken {
     return Date.now() - this.lastTouched.getTime() > LAST_TOUCHED_EXPIRATION;
   }
 
-  @ManyToOne(type => User)
+  @ManyToOne(type => User, {
+    onDelete: "CASCADE"
+  })
   @JoinColumn()
   user: User;
 }

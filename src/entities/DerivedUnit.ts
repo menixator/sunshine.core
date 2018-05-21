@@ -16,9 +16,8 @@ export class DerivedUnit {
     description: "The unit that this unit was derived from"
   })
   @ManyToOne(type => Unit, {
-    nullable: false,
     onDelete: "CASCADE",
-    onUpdate: "CASCADE"
+    nullable: false
   })
   parent: Unit;
 

@@ -20,6 +20,7 @@ export class MeasurementReading {
   date: Date;
 
   @ManyToOne(type => MeasurementDefinition, definition => definition.readings, {
+    onDelete: "CASCADE",
     nullable: false
   })
   definition: MeasurementDefinition;

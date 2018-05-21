@@ -26,9 +26,8 @@ export class Realm {
 
   @Field(type => Cluster, { description: "Parent cluster", nullable: true })
   @ManyToOne(type => Cluster, cluster => cluster.realms, {
-    nullable: true,
     onDelete: "CASCADE",
-    onUpdate: "CASCADE"
+    nullable: true
   })
   cluster: Cluster;
 

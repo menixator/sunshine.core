@@ -19,6 +19,6 @@ export class CounterReading {
   @Column({ type: "datetime", nullable: false })
   date: Date;
 
-  @ManyToOne(type => CounterDefinition, { nullable: false })
+  @ManyToOne(type => CounterDefinition, { nullable: false, onDelete: "CASCADE"})
   definition: CounterDefinition;
 }

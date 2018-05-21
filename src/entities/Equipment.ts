@@ -7,7 +7,8 @@ import {
   Index,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Unique
+  Unique,
+  OneToMany
 } from "typeorm";
 import { Realm } from "./Realm";
 
@@ -27,9 +28,8 @@ export class Equipment {
 
   @Field(type => Realm, { nullable: false })
   @ManyToOne(type => Realm, realm => realm.equipments, {
-    nullable: false,
     onDelete: "CASCADE",
-    onUpdate: "CASCADE"
+    nullable: false
   })
   realm: Realm;
 
@@ -39,10 +39,16 @@ export class Equipment {
   comparator: String;
 
   @Field(type => [MeasurementDefinition])
-  @ManyToOne(type => MeasurementDefinition)
+  @OneToMany(type => MeasurementDefinition, def => def.equipment, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE"
+  })
   measurements: MeasurementDefinition[];
 
   @Field(type => [CounterDefinition])
-  @ManyToOne(type => CounterDefinition)
+  @OneToMany(type => CounterDefinition, def => def.equipment, {
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE"
+  })
   counters: CounterDefinition[];
 }
