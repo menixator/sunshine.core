@@ -23,7 +23,7 @@ export class Cluster {
   @Column()
   @Index({ unique: true })
   name: string;
-  
+
   @Field(type => [Realm], {
     description: "Realms contained in the cluster"
   })

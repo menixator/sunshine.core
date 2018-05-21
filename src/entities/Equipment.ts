@@ -26,7 +26,11 @@ export class Equipment {
   name: string;
 
   @Field(type => Realm, { nullable: false })
-  @ManyToOne(type => Realm, realm => realm.equipments, { nullable: false })
+  @ManyToOne(type => Realm, realm => realm.equipments, {
+    nullable: false,
+    onDelete: "CASCADE",
+    onUpdate: "CASCADE"
+  })
   realm: Realm;
 
   @Field({ nullable: false })
