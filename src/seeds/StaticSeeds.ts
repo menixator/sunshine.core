@@ -18,6 +18,7 @@ import { Unit } from "@entities/Unit";
 import { DerivedUnit } from "@entities/DerivedUnit";
 import { MeasurementDefinition } from "@entities/MeasurementDefinition";
 import { NamedTimeRange } from "@entities/NamedTimeRange";
+import { MeasurementReading } from "@entities/MeasurementReading";
 
 typeORMUserContainer(Container);
 
@@ -163,7 +164,18 @@ class MonolithicSeed {
 
       measurementDefinition.equipment = equipment;
 
-      this.manager.save(measurementDefinition);
+      await this.manager.save(measurementDefinition);
+
+      let topLimit = Math.random() * 10e4;
+
+      for (let i = 0; i < topLimit; i++) {
+        let measurementReading = new MeasurementReading();
+        measurementReading.date = new Date(Date.now() - topLimit);
+        measurementReading.value = Math.random() * Date.now();
+        measurementReading.definition = measurementDefinition;
+
+        await this.manager.save(measurementReading);
+      }
     }
   }
 
