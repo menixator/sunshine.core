@@ -151,10 +151,18 @@ class MonolithicSeed {
         NamedTimeRange,
         {
           where: {
-            name: ["Month", "Year", "Day"][Math.floor(Math.random() * 3)]
+            name: ["Month", "Week", "Day"][Math.floor(Math.random() * 3)]
           }
         }
       );
+      measurementDefinition.unit = (await this.manager
+        .createQueryBuilder(Unit, "unit")
+        .orderBy("RANDOM()")
+        .limit(1)
+        .getOne())!;
+
+      measurementDefinition.equipment = equipment;
+
       this.manager.save(measurementDefinition);
     }
   }
