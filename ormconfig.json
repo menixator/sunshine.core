@@ -1,7 +1,8 @@
 {
   "type": "sqlite",
   "database": "db/main.db",
-  "logging": "all",
+  "logging": true,
+  "logger": "advanced-console",
   "entities": ["src/entities/**/*.ts"],
   "migrations": ["src/migrations/**/*.ts"],
   "subscribers": ["src/subscribers/**/*.ts"],
